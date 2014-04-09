@@ -1,0 +1,104 @@
+/*
+ The code here is designed for one sole purpose to free programmer to use seperate api's for dealing with http header and soap envelope.
+ This from my part is a start and i believe this work can be further refined by other programmers like me out there.
+ It is not a copyrighted code or belong to any of the institution in any way,speaking legally.
+ Anyone can modify and use it for his own purpose be it commercial or personal research.
+ */
+/*
+  The Code her actually takes as input, buffered reader object which contains the data stream from the proxy server setup by to capture
+  the webs service  requests.
+  The output that comes out of it is the hashmap data structure containing the http headers values.
+ */
+/
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ *
+ * @author Abhinav Nath Gupta
+ */
+public class ExtractHashMapofHTTPHeader {
+      public static Map<String,String> HttpHeader (BufferedReader br) throws IOException
+    {
+//        String str = "POST /axis2/services/BasicTradingService.BasicTradingServiceHttpSoap11Endpoint/ HTTP/1.1\n" +
+//"Accept-Encoding: gzip,deflate\n" +
+//"Content-Type: text/xml;charset=UTF-8\n" +
+//"SOAPAction: \"urn:hello\"\n" +
+//"Content-Length: 285\n" +
+//"Host: localhost:8090\n" +
+//"Connection: Keep-Alive\n" +
+//"User-Agent: Apache-HttpClient/4.1.1 (java 1.5)\n" +
+//"\n" +
+//"<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:bas=\"http://basictrading.org\">\n" +
+//"   <soapenv:Header/>\n" +
+//"   <soapenv:Body>\n" +
+//"      <bas:hello>\n" +
+//"         <bas:name>?</bas:name>\n" +
+//"      </bas:hello>\n" +
+//"   </soapenv:Body>\n" +
+//"</soapenv:Envelope>";
+ // code to generate the hashmap of the http headers extracted from  the input packet
+	// convert String into InputStream
+//	InputStream is = new ByteArrayInputStream(str.getBytes());
+        Map<String,String> httpheader = new HashMap<String,String>();
+//	// read it with BufferedReader
+//	BufferedReader br = new BufferedReader(new InputStreamReader(is));
+        StringBuilder builder = new StringBuilder();
+	String line;
+        // code to detect and save http Headers
+	while ((line = br.readLine()) != null && (!line.matches("<[:A-Za-z]+"))) {
+		if(line.isEmpty()) break;
+                if(line.contains("POST"))
+                {
+                    String[] splits  = line.split(" ");
+                    StringBuilder sb = new StringBuilder();
+                    for(int i = 1;i<splits.length;i++)
+                        {
+                             sb.append(splits[i].toString());
+                             sb.append(" ");
+                        }
+                        httpheader.put(splits[0].toString(), sb.toString());
+                      
+                      System.out.println(splits[0].toString() + " : " + httpheader.get(splits[0].toString()));
+                }
+                if(line.contains("GET"))
+                {
+                     String[] splits  = line.split(" ");
+                   StringBuilder sb = new StringBuilder();
+                     for(int i = 1;i<splits.length;i++)
+                        {
+                         sb.append(splits[i].toString());
+                             sb.append(" ");
+                        }
+                        httpheader.put(splits[0], sb.toString());
+                      
+                      System.out.println(splits[0] + " : " + httpheader.get(splits[0]));
+                }
+                if(line.contains(":"));
+                {
+                    String[] splits  = line.split(":");
+                    StringBuilder sb = new StringBuilder();
+                        for(int i = 1;i<splits.length;i++)
+                        {
+                           
+                            sb.append(splits[i].toString());
+                             sb.append(" ");
+                        }
+                        httpheader.put(splits[0], sb.toString());
+                      
+                      System.out.println(splits[0] + " : " + httpheader.get(splits[0]));
+                }
+	}
+                 
+	br.close();
+        return httpheader;
+    }
+    
+    
+}
