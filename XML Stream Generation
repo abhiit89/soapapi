@@ -1,0 +1,69 @@
+/*
+ The code here is designed for one sole purpose to free programmer to use seperate api's for dealing with http header and soap envelope.
+ This from my part is a start and i believe this work can be further refined by other programmers like me out there.
+ It is not a copyrighted code or belong to any of the institution in any way,speaking legally.
+ Anyone can modify and use it for his own purpose be it commercial or personal research.
+ */
+/*
+The Code her actually takes as input, buffered reader object which contains the data stream from the proxy server setup by to capture
+  the webs service  requests.
+  To generate the stream of the xml and soap part of the message and save it as the inputstream object.
+
+*/
+
+
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+/**
+ *
+ * @author Abhinav Nath Gupta.
+ *
+ */
+public class XMLStreamGenration 
+{
+
+//    public static void main(String[] args) throws IOException
+//    {
+//        String str = "POST /axis2/services/BasicTradingService.BasicTradingServiceHttpSoap11Endpoint/ HTTP/1.1\n" +
+//                     "Accept-Encoding: gzip,deflate\n" +
+//                     "Content-Type: text/xml;charset=UTF-8\n" +
+//                     "SOAPAction: \"urn:hello\"\n" +
+//                     "Content-Length: 285\n" +
+//                     "Host: localhost:8090\n" +
+//                     "Connection: Keep-Alive\n" +
+//                     "User-Agent: Apache-HttpClient/4.1.1 (java 1.5)\n" +
+//                     "\n" +
+//                     "<soapenv:Envelope xmlns:soapenv=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:bas=\"http://basictrading.org\">\n" +
+//                     "   <soapenv:Header/>\n" +
+//                     "   <soapenv:Body>\n" +
+//                     "      <bas:hello>\n" +
+//                     "         <bas:name>?</bas:name>\n" +
+//                     "      </bas:hello>\n" +
+//                     "   </soapenv:Body>\n" +
+//                     "</soapenv:Envelope>";
+//        // code to generate the xml part of the recieved packet part of the interceptor code
+//        int index = str.indexOf("<soapenv");
+//        int index1 = str.lastIndexOf('>');
+//        String xmlpart = str.substring(index, index1+1);
+//        InputStream is = new ByteArrayInputStream(xmlpart.getBytes());
+//        System.out.println(xmlpart.toString());
+//    }
+    public static InputStream Envelope (BufferedReader bRead) throws IOException
+    {
+        InputStream is = null;
+        String line = null;
+        StringBuffer str = new StringBuffer();
+        while((line=bRead.readLine())!=null)
+        {
+        str.append(line+"\n");
+        }
+        int index = str.indexOf("<soapenv");
+        int index1 = str.lastIndexOf(">");
+        String xmlpart = str.substring(index, index1+1);
+        is = new ByteArrayInputStream(xmlpart.getBytes());
+        return is;
+    }
+}
