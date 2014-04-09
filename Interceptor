@@ -1,0 +1,85 @@
+/*
+ The code here is designed for one sole purpose to free programmer to use seperate api's for dealing with http header and soap envelope.
+ This from my part is a start and i believe this work can be further refined by other programmers like me out there.
+ It is not a copyrighted code or belong to any of the institution in any way,speaking legally.
+ Anyone can modify and use it for his own purpose be it commercial or personal research.
+ */
+/*
+Proxy server Code.
+*/
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.lang.String;
+import java.net.ServerSocket;
+import java.net.Socket;
+
+/**
+ *
+ * @author Abhinav Nath Gupta
+ */
+public class Interceptor {
+    int port;
+    public Interceptor()
+    {
+                 
+ServerSocket server_socket; 
+BufferedReader input; 
+String lineToBeSent;
+
+PrintWriter output;
+System.out.println("port = 8090 (default)"); 
+port = 8090; 
+ 
+
+try { 
+
+server_socket = new ServerSocket(port); 
+System.out.println("Server waiting for client on port " + 
+server_socket.getLocalPort()); 
+
+// server infinite loop 
+while(true) { 
+Socket socket = server_socket.accept(); 
+System.out.println("New connection accepted " + 
+socket.getInetAddress() + 
+":" + socket.getPort()); 
+input = new BufferedReader(new InputStreamReader(socket.getInputStream())); 
+// print received data 
+
+try { 
+while(true) { 
+String message = input.readLine(); 
+if (message==null) break; 
+
+
+System.out.println(message); 
+if (message.equals("PING|")) { 
+output = new PrintWriter(socket.getOutputStream(),true); 
+
+// get user input and transmit it to server 
+
+lineToBeSent = "OK"; 
+// stop if input line is "." 
+output.println(lineToBeSent); 
+socket.close(); 
+} 
+} 
+} 
+catch (IOException e) { 
+System.out.println(e); 
+} 
+// connection closed by client 
+} 
+} 
+
+catch (IOException e) { 
+System.out.println(e); 
+} 
+        
+        
+    }
+    }
+
